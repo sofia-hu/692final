@@ -34,115 +34,18 @@
     <script src="js/main.js"></script>
 
   <script>
-    var slides = [
-      { title: "Miami 2010 Census", description: "The decennial census data is a good starting point for urban planners to get a general understanding of their target cities. The map on the right shows the population distribution in Miami based on the 2010 census results. Census tracts with a total population of more than 4000 people are displayed in blue shade.", color: "#F0F0F0" , fly:false, filter:myFilter, style:myStyle},
-      { title: "Household", description: "The household distribution in Miami is more concentrated than the population. Census tracts with a total household number of more than 2000 are displayed in yellow shade.", color: "#F0F0F0", fly:false, filter:myFilter1, style:myStyle1 },
-      { title: "White Population", description: "The distribution of White population in Miami is concentrated along the coast. Census tracts with a white population of more than 600 people are displayed in green shade.", color: "#F0F0F0" ,  fly:false, filter:myFilter2, style:myStyle2},
-      { title: "African American Population", description: "The distribution of African American population is concentrated in the north-eastern part of Miami. Census tracts with a African American population of more than 600 people are displayed in purple shade.", color: "#F0F0F0", fly:false, filter:myFilter3, style:myStyle3},
-      { title: "Hispanic Population", description: "The distribution of hispanic population in Miami is concentrated in the western part of the city. Census tracts with a hispanic population of more than 2000 people are displayed in red shade. There are comparatively less hispanic residents in the center city.", color: "#F0F0F0", fly:true, filter:myFilter4, style:myStyle4},
-    ]
-    var currentSlide = 0
 
-    var flyto = function(fly){
-      if(fly==true){
-      map.flyTo([25.772101, -80.192409], 14);
-      }
-      else{
-      map.flyTo([25.779867, -80.223289], 12);
-      }
-      };
-
-    var hidePrevious = function() {
-      if (currentSlide == 0){
-        $('#previousButton').hide()
-      }
-    }
-    hidePrevious()
-
-    var showPrevious = function() {
-      if (currentSlide != 0){
-        $('#previousButton').show()
-      }
-    }
-    var hidenext = function() {
-      if (currentSlide == slides.length - 1){
-        $('#nextButton').hide()
-      }
-    }
-    var shownext = function() {
-      if (currentSlide != slides.length - 1){
-        $('#nextButton').show()
-      }
-    }
-
-    var featureGroup
-
-    var loadSlide = function(slide) {
+    var loadSlide = function() {
       //load all data
-      $('#title').text(slide.title)
-      $('#description').text(slide.description)
-      $('#sidebar').css("background-color", slide.color)
       $(document).ready(function() {
           $.ajax(dataset).done(function(data) {
           var parsedData = JSON.parse(data);
-          featureGroup = L.geoJson(parsedData,{
-            style: slide.style,
-            filter: slide.filter
-          }
+          featureGroup = L.geoJson(parsedData
         ).addTo(map);
         });
       });
-      flyto(slide.fly);
     }
-    loadSlide(slides[currentSlide])
-
-    var removeSlide = function(slide){
-      map.removeLayer(slide);
-    }
-
-    var next = function() {
-      if (currentSlide == slides.length - 1) {
-      } else {
-        $('#nextButton').show()
-        currentSlide = currentSlide + 1
-        removeSlide(featureGroup)
-        loadSlide(slides[currentSlide])
-      }
-
-      if (currentSlide == slides.length - 1) {
-        $('#nextButton').hide()
-      }
-      hidePrevious()
-      showPrevious()
-      hidenext()
-      shownext()
-    }
-
-    $('#nextButton').click(function(e) {
-      next()
-    });
-
-    var previous = function() {
-      if (currentSlide == 0) {
-        $('#previousButton').hide()
-      }
-
-      if (currentSlide == 0) {
-      } else {
-        $('#previousButton').show()
-        currentSlide = currentSlide - 1
-        removeSlide(featureGroup)
-        loadSlide(slides[currentSlide])
-      }
-  hidePrevious()
-  showPrevious()
-  hidenext()
-  shownext()
-    }
-
-    $('#previousButton').click(function(e) {
-      previous()
-    });
+    loadSlide()
 
   </script>
 

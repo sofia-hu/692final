@@ -3,7 +3,7 @@ Leaflet Configuration
 ===================== */
 
 var map = L.map('map', {
-  center: [25.779867, -80.223289],
+  center: [37.754903, -122.449282],
   zoom: 12
 });
 
@@ -15,7 +15,7 @@ var Stamen_TonerLite = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{
   ext: 'png'
 }).addTo(map);
 
-var dataset = "https://raw.githubusercontent.com/sofia-hu/692mid/master/data/cliptract.geojson"
+var dataset = "https://raw.githubusercontent.com/sofia-hu/692final/master/data/data.json"
 
 var myStyle = function(feature) {
   var collColor;
