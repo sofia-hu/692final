@@ -15,7 +15,7 @@ var Stamen_TonerLite = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{
   ext: 'png'
 }).addTo(map);
 
-var dataset = "https://raw.githubusercontent.com/sofia-hu/692final/master/data/data.json"
+var dataset = "data/map(1).geojson"
 
 var myStyle = function(feature) {
   var collColor;
