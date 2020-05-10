@@ -10,11 +10,19 @@
 
 <body>
   <!-- Sidebar -->
-  <div id="sidebar" style="position: absolute; top:0; left: 0; width: 400px; height: 100%; background-color: red">
-    <h1 id="title">Title</h1>
-    <p id="description">This is the description</p>
-    <button id="previousButton">previous</button>
-    <button id="nextButton">next</button>
+  <div id="sidebar" style="position: absolute; top:0; left: 0; width: 400px; height: 100%; background-color: white">
+    <h1 id="title">San Francisco Home Finder</h1>
+    <p id="description">Choose whether to look for past transactions or properties currently in hold before filtering</p>
+    <input type="checkbox" id="holdb" name="holdb" checked>
+    <label for="holdb">Hold out?</label>
+    <p id="description">Enter the max amount of money($) you'd like to pay</p>
+    <p id="description"><i> Max:4750003, Median:930003, Min:100001 </i></p>
+    <p id="description">Price lower than:</p>
+    <input id="priceb" type="number">
+    <button id="updateb">Update filter</button>
+    <p id="description"><b>Your price:</b></p>
+    <output id="pricebb" ></output>
+    <p id="description">Your price is among the <output id="percent" ></output> homes in San Francisco.</p>
   </div>
 
   <!-- Map -->
@@ -32,22 +40,6 @@
     <script src="js/underscore.js"></script>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script src="js/main.js"></script>
-
-  <script>
-
-    var loadSlide = function() {
-      //load all data
-      $(document).ready(function() {
-          $.ajax(dataset).done(function(data) {
-          var parsedData = JSON.parse(data);
-          featureGroup = L.geoJson(parsedData
-        ).addTo(map);
-        });
-      });
-    }
-    loadSlide()
-
-  </script>
 
   </body>
 </html>

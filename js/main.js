@@ -1,5 +1,5 @@
 /* =====================
-Leaflet Configuration
+setup
 ===================== */
 
 var map = L.map('map', {
@@ -15,93 +15,176 @@ var Stamen_TonerLite = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{
   ext: 'png'
 }).addTo(map);
 
-var dataset = "data/map(1).geojson"
+/* =====================
+main
+===================== */
 
-var myStyle = function(feature) {
-  var collColor;
-  if (feature["properties"]["POP2010"]>4000){
-    collColor = 'blue'
+var dataset = "https://raw.githubusercontent.com/sofia-hu/692final/master/data/onlinejsonconvert.geojson"
+
+var hold = true;
+  var myHold = function(feature) {
+    if(hold){
+      if (feature["properties"]["holdOut"]=="0"){return false;  }
+      else{return true; }
+    }
+    else{
+      if (feature["properties"]["holdOut"]=="0"){return true;  }
+      else{return false;}
+    };
   }
-  else{collColor = 'lightblue'};
-  return {fillColor: collColor};
-};
 
-var myFilter = function(feature) {
-  if(feature["properties"]["POP2010"]<0){
-      return false;
+/*var myStyle = function(feature) {
+  var collColor;
+  if (feature["properties"]["holdOut"]=="0"){
+    collColor = 'blue';
+  }
+  else{collColor = 'red';}
+  return {fillColor: collColor};
+};*/
+
+var price = 1;
+var myPrice = function(feature) {
+  if(feature["properties"]["SalePrice"]<price){
+      return true;
   }
   else{
-    return true;
+    return false;
   };
 };
 
-var myStyle1 = function(feature) {
-  var collColor;
-  if (feature["properties"]["HU2010"]>2000){
-    collColor = 'yellow'
-  }
-  else{collColor = 'lightyellow'};
-  return {fillColor: collColor};
-};
-
-var myFilter1 = function(feature) {
-  if(feature["properties"]["HU2010"]<0){
-      return false;
+var predict = 1;
+var myPredict = function(feature) {
+  if(feature["properties"]["predict"]<price){
+      return true;
   }
   else{
-    return true;
+    return false;
   };
 };
 
-var myStyle2 = function(feature) {
-  var collColor;
-  if (feature["properties"]["WHITENH"]>600){
-    collColor = 'green'
-  };
-  //else{collColor = 'lightgreen'};
-  return {fillColor: collColor};
-};
-
-var myFilter2 = function(feature) {
-  if(feature["properties"]["WHITENH"]<600){
-      return false;
+var myFilter = function(feature){
+  if(myHold(feature)){
+    if(hold){
+      if(myPredict(feature))
+          {return true;}
+          else{return false;}
+    }
+    else{
+      if(myPrice(feature))
+          {return true;}
+          else{return false;}
+    }
   }
-  else{
-    return true;
-  };
+  else{  return false; }
+}
+
+var featureGroup;
+var parsedData;
+
+var loadSlide = function() {
+  //load all data
+  $(document).ready(function() {
+      $.ajax(dataset).done(function(data) {
+      parsedData = JSON.parse(data);
+      featureGroup = L.geoJson(parsedData,{
+        //style: myStyle,
+        filter: myHold
+      }
+    ).addTo(map);
+    });
+  });
 };
 
-var myStyle3 = function(feature) {
-  var collColor;
-  if (feature["properties"]["BLACKNH"]>600){
-    collColor = 'purple'
-  };
-  return {fillColor: collColor};
-};
+loadSlide();
 
-var myFilter3 = function(feature) {
-  if(feature["properties"]["BLACKNH"]<600){
-      return false;
+var cprice=0;
+var cpredict=0;
+
+function onEachFeature(feature, layer) {
+  layer.on('click', function (e) {
+    console.log(e);
+    cprice=e.target.feature.properties.SalePrice;
+    cpredict=e.target.feature.properties.predict;
+    console.log(cprice);
+    console.log(cpredict);
+
+    if(hold){
+      $('#pricebb').val(cpredict);
+    }
+    else{$('#pricebb').val(cprice);}
+
+if(hold){
+  if(cpredict<695001){
+    $('#percent').val("25% cheapest");}
+    else{
+      if(cpredict<930003){
+        $('#percent').val("50% cheapest");}
+        else{
+          if(cpredict<1380002){
+              $('#percent').val("50% most expensive");}
+              else{
+                $('#percent').val("25% most expensive");
+              }
+        }
   }
-  else{
-    return true;
+}
+else{
+  if(cprice<695001){
+    $('#percent').val("25% cheapest");}
+    else{
+      if(cprice<930003){
+        $('#percent').val("50% cheapest");}
+        else{
+          if(cprice<1380002){
+              $('#percent').val("50% most expensive");}
+              else{
+                $('#percent').val("25% most expensive");
+              }
+        }
+  }
+}
+
+    map.flyTo([e.latlng.lat, e.latlng.lng], 16);
+  });
+}
+
+var plotData = function(){
+  $(document).ready(function() {
+      $.ajax(dataset).done(function(data) {
+      parsedData = JSON.parse(data);
+      featureGroup = L.geoJson(parsedData,{
+        //style: myStyle,
+        filter: myFilter,
+        onEachFeature: onEachFeature
+      }
+    ).bindPopup(function (layer) {
+    return "<br><b>Address:</b> " + layer.feature.properties.Address
+    + "<br><b>Built Year:</b> " + layer.feature.properties.BuiltYear
+    + "<br><b>Bedrooms:</b> " + layer.feature.properties.Beds
+    + "<br><b>Bathrooms:</b> " + layer.feature.properties.Baths
+    + "<br><b>Lot Area:</b> " + layer.feature.properties.LotArea + "<b> sqft</b> "
+    + "<br><b>Prop Area:</b> " + layer.feature.properties.PropArea + "<b> sqft</b> ";
+}).addTo(map);
+    });
+  });
   };
+
+var resetMap = function(data){
+  map.removeLayer(data);
 };
 
-var myStyle4 = function(feature) {
-  var collColor;
-  if (feature["properties"]["HISPAN"]>2000){
-    collColor = 'red'
-  }
-  else{collColor = 'lightred'};
-  return {fillColor: collColor};
-};
+$('button#updateb').click(function(e) {
+  price = $('#priceb').val();
+  console.log("price", price);
 
-var myFilter4 = function(feature) {
-  if(feature["properties"]["HISPAN"]<0){
-      return false;
-  }
-  else{
-    return true;
-  };
-};
+  predict = $('#priceb').val();
+  console.log("predict", predict);
+
+  hold = $('#holdb')[0].checked;
+  console.log("hold", hold);
+
+  resetMap(featureGroup);
+  map.flyTo([37.754903, -122.449282], 12);
+  plotData();
+
+});
